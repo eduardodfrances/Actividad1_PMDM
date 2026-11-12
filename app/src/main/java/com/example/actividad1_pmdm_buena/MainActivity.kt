@@ -1,6 +1,7 @@
 package com.example.actividad1_pmdm_buena
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,11 +12,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.actividad1_pmdm_buena.logic.calcularNomina
+import com.example.actividad1_pmdm_buena.logic.usuarioA
+import com.example.actividad1_pmdm_buena.logic.usuarioB
+import com.example.actividad1_pmdm_buena.logic.usuarioC
 import com.example.actividad1_pmdm_buena.ui.theme.Actividad1_PMDM_BUENATheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // PRUEBA TEMPORAL del cálculo: borrar cuando cuadre
+        Log.d("NOMINA", "A: ${calcularNomina(usuarioA)}")
+        Log.d("NOMINA", "B: ${calcularNomina(usuarioB)}")
+        Log.d("NOMINA", "C: ${calcularNomina(usuarioC)}")
+
         enableEdgeToEdge()
         setContent {
             Actividad1_PMDM_BUENATheme {

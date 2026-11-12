@@ -1,9 +1,10 @@
-package logic
-
+package  com.example.actividad1_pmdm_buena.logic
 import com.example.actividad1_pmdm_buena.model.DatosUsuario
 import com.example.actividad1_pmdm_buena.model.Discapacidad
 import com.example.actividad1_pmdm_buena.model.EstadoCivil
 import com.example.actividad1_pmdm_buena.model.GrupoProfesional
+import com.example.actividad1_pmdm_buena.model.ResultadoNomina
+import kotlin.math.floor
 
 
 const val TIPO_SEGURIDAD_SOCIAL = 0.065
@@ -157,6 +158,45 @@ fun minimoPorHijos (hijos: Int, estadoCivil: EstadoCivil) : Double {
     return total
 }
 
+
+fun calcularNomina (datos : DatosUsuario ) : ResultadoNomina {
+
+    val baseCotizacion = datos.salarioBruto.coerceIn(baseMinimaAnual(datos.grupoProfesional), BASE_MAXIMA_ANUAL)
+    val seguridadSocial = baseCotizacion * TIPO_SEGURIDAD_SOCIAL
+    val rendimientoNeto = datos.salarioBruto - seguridadSocial
+    val gastos = (GASTOS_GENERALES + extraGastosDiscapacidad(datos.discapacidad)).coerceAtMost(rendimientoNeto)
+    val reduccion = reduccionTrabajo(rendimientoNeto)
+
+    val extraHijos = if (datos.hijos > 2) REDUCCION_MAS_DE_DOS_HIJOS else 0.0
+    val base = (rendimientoNeto - gastos - reduccion - extraHijos).coerceAtLeast(0.0)
+
+    val extra65 = if (datos.edad >= EDAD_65) MINIMO_EDAD_65 else 0.0
+    val extra75 = if (datos.edad >= EDAD_75) MINIMO_EDAD_75 else 0.0
+    val minimo = MINIMO_PERSONAL + extra65 + extra75 +
+            minimoDiscapacidad(datos.discapacidad) +
+            minimoPorHijos(datos.hijos, datos.estadoCivil)
+
+    val cuotaInicial = (escala(base) - escala(minimo)).coerceAtLeast(0.0)
+
+    val limite = limiteExento(datos.estadoCivil, datos.hijos)
+    val tope = ((datos.salarioBruto - limite) * PORCENTAJE_TOPE).coerceAtLeast(0.0)
+    val cuotaConTope = if (datos.salarioBruto <= LIMITE_TOPE_43) minOf(cuotaInicial, tope) else cuotaInicial
+    val cuota = if (datos.salarioBruto <= limite) 0.0 else cuotaConTope
+
+    val tipo = floor(cuota / datos.salarioBruto * 100 * 100) / 100
+    val retencion = datos.salarioBruto * tipo / 100
+    val netoAnual = datos.salarioBruto - seguridadSocial - retencion
+    val netoPorPaga = netoAnual / datos.pagas.toDouble()
+
+    return ResultadoNomina(
+        salarioBruto = datos.salarioBruto,
+        porcentajeIrpf = tipo,
+        retencionIrpf = retencion,
+        deducciones = seguridadSocial,
+        salarioNeto = netoAnual,
+        netoPorPaga = netoPorPaga
+    )
+}
 
 
 
