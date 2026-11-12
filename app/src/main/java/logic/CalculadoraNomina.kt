@@ -87,8 +87,82 @@ fun escala (cantidad : Double) : Double {
         else -> 0.0
 
     }
-
-
-
-
 }
+
+fun baseMinimaAnual (grupoProfesional: GrupoProfesional) : Double{
+    return when (grupoProfesional){
+        GrupoProfesional.DIRECTIVO -> 23871.60
+        GrupoProfesional.TECNICO -> 19796.40
+        GrupoProfesional.ADMINISTRATIVO -> 17092.80
+        GrupoProfesional.OPERARIO -> 17092.80
+    }
+}
+
+fun extraGastosDiscapacidad (discapacidad: Discapacidad) : Double{
+    return when (discapacidad){
+        Discapacidad.NINGUNA -> 0.0
+        Discapacidad.ENTRE_33_Y_65 -> 3500.0
+        Discapacidad.MAYOR_65 -> 7750.0
+    }
+}
+fun minimoDiscapacidad (discapacidad: Discapacidad) : Double{
+    return when (discapacidad){
+        Discapacidad.NINGUNA -> 0.0
+        Discapacidad.ENTRE_33_Y_65 -> 3000.0
+        Discapacidad.MAYOR_65 -> 12000.0
+    }
+}
+
+fun limiteExento (estadoCivil: EstadoCivil, hijos : Int) : Double {
+    return if (estadoCivil != EstadoCivil.CASADO && hijos >=1) {
+        when (hijos) {
+
+            1 -> 17644.0
+            else -> 18694.0
+        }
+    } else {
+        when (hijos) {
+            0 -> 15876.0
+            1 -> 16342.0
+            else -> 16867.0
+        }
+    }
+}
+
+fun reduccionTrabajo (rendimientoNeto : Double) : Double {
+    return when {
+        rendimientoNeto > 19747.50 -> 0.0
+        rendimientoNeto > 17673.52 -> 2364.34 - 1.14 * (rendimientoNeto - 17673.52)
+        rendimientoNeto > 14852.0 -> 7302.0 - 1.75 * (rendimientoNeto - 14852.0)
+        else -> 7302.0
+    }
+}
+
+fun minimoPorHijos (hijos: Int, estadoCivil: EstadoCivil) : Double {
+
+    var total = 0.0
+
+    for (posicion in 1.. hijos ){
+        total += when (posicion) {
+            1 -> 2400.0
+            2 -> 2700.0
+            3 -> 4000.0
+            else -> 4500.0
+        }
+    }
+
+    if (estadoCivil == EstadoCivil.CASADO)
+        total *= FACTOR_HIJOS_CASADO
+
+    return total
+}
+
+
+
+
+
+
+
+
+
+
