@@ -1,4 +1,10 @@
-package model
+package com.example.actividad1_pmdm_buena.model
 
-class ResultadoNomina {
-}
+data class ResultadoNomina(
+    val salarioBruto: Double,
+    val porcentajeIrpf: Double,
+    val retencionIrpf: Double,
+    val deducciones: Double,
+    val salarioNeto: Double,
+    val netoPorPaga: Double
+)

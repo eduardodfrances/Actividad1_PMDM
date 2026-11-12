@@ -1,5 +1,11 @@
-package model
+package com.example.actividad1_pmdm_buena.model
 
-class DatosUsuario {
-
-}
+data class DatosUsuario(
+    val salarioBruto: Double,
+    val pagas: Int,
+    val edad: Int,
+    val grupoProfesional: GrupoProfesional,
+    val discapacidad: Discapacidad,
+    val estadoCivil: EstadoCivil,
+    val hijos: Int
+)
