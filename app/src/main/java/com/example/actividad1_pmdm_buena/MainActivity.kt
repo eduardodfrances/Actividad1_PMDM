@@ -1,6 +1,7 @@
 package com.example.actividad1_pmdm_buena
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.actividad1_pmdm_buena.screens.PantallaDatos
 import com.example.actividad1_pmdm_buena.ui.theme.Actividad1_PMDM_BUENATheme
 
 class MainActivity : ComponentActivity() {
@@ -20,10 +22,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             Actividad1_PMDM_BUENATheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                        PantallaDatos(
+                            alCalcular = { perfil -> Log.d("PRUEBA", "Guardado: $perfil") },
+                            modifier = Modifier.padding(innerPadding),
+                        )
                 }
             }
         }
@@ -45,3 +47,4 @@ fun GreetingPreview() {
         Greeting("Android")
     }
 }
+
