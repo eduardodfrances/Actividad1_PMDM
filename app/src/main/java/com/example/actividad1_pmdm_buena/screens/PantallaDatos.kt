@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -29,8 +31,7 @@ import com.example.actividad1_pmdm_buena.model.GrupoProfesional
 
 @Composable
 fun PantallaDatos(
-    alCalcular: (DatosUsuario) -> Unit,
-    modifier: Modifier = Modifier
+    alCalcular: (DatosUsuario) -> Unit, modifier: Modifier = Modifier
 ) {
     // Salario
     var textoSalario by rememberSaveable { mutableStateOf("") }
@@ -56,6 +57,8 @@ fun PantallaDatos(
     var grupoProfesional by rememberSaveable { mutableStateOf(GrupoProfesional.ADMINISTRATIVO) }
     var discapacidad by rememberSaveable { mutableStateOf(Discapacidad.NINGUNA) }
 
+    val formularioValido = salarioValido && edadValida && hijosValido
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -65,156 +68,175 @@ fun PantallaDatos(
     ) {
         Text("Calcula tu salario neto", style = MaterialTheme.typography.headlineSmall)
 
-        OutlinedTextField(
-            value = textoSalario,
-            onValueChange = { textoSalario = it },
-            label = { Text("Salario bruto anual") },
-            suffix = { Text("€") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            singleLine = true,
-            isError = errorSalario,
-            supportingText = { if (errorSalario) Text("Introduce un salario mayor que 0") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        // Tarjeta: datos económicos
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Text("Datos económicos", style = MaterialTheme.typography.titleMedium)
 
-        OutlinedTextField(
-            value = textoEdad,
-            onValueChange = { textoEdad = it },
-            label = { Text("Edad") },
-            suffix = { Text("años") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            singleLine = true,
-            isError = errorEdad,
-            supportingText = { if (errorEdad) Text("Edad entre 16 y 100 años") },
-            modifier = Modifier.fillMaxWidth()
-        )
+                OutlinedTextField(
+                    value = textoSalario,
+                    onValueChange = { textoSalario = it },
+                    label = { Text("Salario bruto anual") },
+                    suffix = { Text("€") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    singleLine = true,
+                    isError = errorSalario,
+                    supportingText = { if (errorSalario) Text("Introduce un salario mayor que 0") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-        OutlinedTextField(
-            value = textoHijos,
-            onValueChange = { textoHijos = it },
-            label = { Text("Número de hijos") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            singleLine = true,
-            isError = errorHijos,
-            supportingText = { if (errorHijos) Text("Entre 0 y 20 hijos") },
-            modifier = Modifier.fillMaxWidth()
-        )
+                Text("Número de pagas", style = MaterialTheme.typography.titleSmall)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = pagas == 12, onClick = { pagas = 12 })
+                    Text("12 pagas")
 
-        // Estado civil
-        Column {
-            Text("Estado civil", style = MaterialTheme.typography.titleSmall)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = estadoCivil == EstadoCivil.SOLTERO,
-                    onClick = { estadoCivil = EstadoCivil.SOLTERO }
-                )
-                Text("Soltero/a")
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = estadoCivil == EstadoCivil.CASADO,
-                    onClick = { estadoCivil = EstadoCivil.CASADO }
-                )
-                Text("Casado/a")
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = estadoCivil == EstadoCivil.SEPARADO,
-                    onClick = { estadoCivil = EstadoCivil.SEPARADO }
-                )
-                Text("Separado/a")
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = estadoCivil == EstadoCivil.DIVORCIADO,
-                    onClick = { estadoCivil = EstadoCivil.DIVORCIADO }
-                )
-                Text("Divorciado/a")
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = estadoCivil == EstadoCivil.VIUDO,
-                    onClick = { estadoCivil = EstadoCivil.VIUDO }
-                )
-                Text("Viudo/a")
+                    RadioButton(
+                        selected = pagas == 14, onClick = { pagas = 14 })
+                    Text("14 pagas")
+                }
             }
         }
 
-        // Grado de discapacidad
-        Column {
-            Text("Grado de discapacidad", style = MaterialTheme.typography.titleSmall)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = discapacidad == Discapacidad.NINGUNA,
-                    onClick = { discapacidad = Discapacidad.NINGUNA }
+        // Tarjeta: datos personales
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Text("Datos personales", style = MaterialTheme.typography.titleMedium)
+
+                OutlinedTextField(
+                    value = textoEdad,
+                    onValueChange = { textoEdad = it },
+                    label = { Text("Edad") },
+                    suffix = { Text("años") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    isError = errorEdad,
+                    supportingText = { if (errorEdad) Text("Edad entre 16 y 100 años") },
+                    modifier = Modifier.fillMaxWidth()
                 )
-                Text("Sin discapacidad")
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = discapacidad == Discapacidad.ENTRE_33_Y_65,
-                    onClick = { discapacidad = Discapacidad.ENTRE_33_Y_65 }
+
+                OutlinedTextField(
+                    value = textoHijos,
+                    onValueChange = { textoHijos = it },
+                    label = { Text("Número de hijos") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    isError = errorHijos,
+                    supportingText = { if (errorHijos) Text("Entre 0 y 20 hijos") },
+                    modifier = Modifier.fillMaxWidth()
                 )
-                Text("Del 33 % al 65 %")
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = discapacidad == Discapacidad.MAYOR_65,
-                    onClick = { discapacidad = Discapacidad.MAYOR_65 }
-                )
-                Text("65 % o más")
+
+                // Estado civil
+                Column {
+                    Text("Estado civil", style = MaterialTheme.typography.titleSmall)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = estadoCivil == EstadoCivil.SOLTERO,
+                            onClick = { estadoCivil = EstadoCivil.SOLTERO })
+                        Text("Soltero/a")
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = estadoCivil == EstadoCivil.CASADO,
+                            onClick = { estadoCivil = EstadoCivil.CASADO })
+                        Text("Casado/a")
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = estadoCivil == EstadoCivil.SEPARADO,
+                            onClick = { estadoCivil = EstadoCivil.SEPARADO })
+                        Text("Separado/a")
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = estadoCivil == EstadoCivil.DIVORCIADO,
+                            onClick = { estadoCivil = EstadoCivil.DIVORCIADO })
+                        Text("Divorciado/a")
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = estadoCivil == EstadoCivil.VIUDO,
+                            onClick = { estadoCivil = EstadoCivil.VIUDO })
+                        Text("Viudo/a")
+                    }
+                }
+
+                // Grado de discapacidad
+                Column {
+                    Text("Grado de discapacidad", style = MaterialTheme.typography.titleSmall)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = discapacidad == Discapacidad.NINGUNA,
+                            onClick = { discapacidad = Discapacidad.NINGUNA })
+                        Text("Sin discapacidad")
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = discapacidad == Discapacidad.ENTRE_33_Y_65,
+                            onClick = { discapacidad = Discapacidad.ENTRE_33_Y_65 })
+                        Text("Del 33 % al 65 %")
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = discapacidad == Discapacidad.MAYOR_65,
+                            onClick = { discapacidad = Discapacidad.MAYOR_65 })
+                        Text("65 % o más")
+                    }
+                }
+
+                // Grupo profesional
+                Column {
+                    Text("Grupo profesional", style = MaterialTheme.typography.titleSmall)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = grupoProfesional == GrupoProfesional.DIRECTIVO,
+                            onClick = { grupoProfesional = GrupoProfesional.DIRECTIVO })
+                        Text("Directivo")
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = grupoProfesional == GrupoProfesional.TECNICO,
+                            onClick = { grupoProfesional = GrupoProfesional.TECNICO })
+                        Text("Técnico")
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = grupoProfesional == GrupoProfesional.ADMINISTRATIVO,
+                            onClick = { grupoProfesional = GrupoProfesional.ADMINISTRATIVO })
+                        Text("Administrativo")
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = grupoProfesional == GrupoProfesional.OPERARIO,
+                            onClick = { grupoProfesional = GrupoProfesional.OPERARIO })
+                        Text("Operario")
+                    }
+                }
             }
         }
 
-        // Grupo profesional
-        Column {
-            Text("Grupo profesional", style = MaterialTheme.typography.titleSmall)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = grupoProfesional == GrupoProfesional.DIRECTIVO,
-                    onClick = { grupoProfesional = GrupoProfesional.DIRECTIVO }
+        Button(
+            onClick = {
+                alCalcular(
+                    DatosUsuario(
+                        salarioBruto = salario!!,
+                        pagas = pagas,
+                        edad = edad!!,
+                        grupoProfesional = grupoProfesional,
+                        discapacidad = discapacidad,
+                        estadoCivil = estadoCivil,
+                        hijos = hijos!!
+                    )
                 )
-                Text("Directivo")
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = grupoProfesional == GrupoProfesional.TECNICO,
-                    onClick = { grupoProfesional = GrupoProfesional.TECNICO }
-                )
-                Text("Técnico")
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = grupoProfesional == GrupoProfesional.ADMINISTRATIVO,
-                    onClick = { grupoProfesional = GrupoProfesional.ADMINISTRATIVO }
-                )
-                Text("Administrativo")
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = grupoProfesional == GrupoProfesional.OPERARIO,
-                    onClick = { grupoProfesional = GrupoProfesional.OPERARIO }
-                )
-                Text("Operario")
-            }
-        }
-
-        Column {
-            Text("Número de pagas", style = MaterialTheme.typography.titleSmall)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = pagas == 12,
-                    onClick = { pagas =12 }
-                )
-                Text("12 pagas")
-
-                RadioButton(
-                    selected = pagas == 14,
-                    onClick = { pagas =14 }
-                )
-                Text("14 pagas")
-
-            }
+            }, enabled = formularioValido, modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Calcular")
         }
     }
 }
