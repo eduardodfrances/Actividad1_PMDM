@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -29,39 +30,43 @@ import com.example.actividad1_pmdm_buena.model.Discapacidad
 import com.example.actividad1_pmdm_buena.model.EstadoCivil
 import com.example.actividad1_pmdm_buena.model.GrupoProfesional
 
+// Primera pantalla: formulario con los datos del usuario
 @Composable
 fun PantallaDatos(
-    alCalcular: (DatosUsuario) -> Unit, modifier: Modifier = Modifier
+    alCalcular: (DatosUsuario) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    // Salario
+    // Salario: acepta coma o punto decimal y debe ser mayor que 0
     var textoSalario by rememberSaveable { mutableStateOf("") }
     val salario = textoSalario.replace(',', '.').toDoubleOrNull()
     val salarioValido = salario != null && salario > 0
     val errorSalario = textoSalario.isNotEmpty() && !salarioValido
 
-    // Edad
+    // Edad: entre 16 y 100 años
     var textoEdad by rememberSaveable { mutableStateOf("") }
     val edad = textoEdad.toIntOrNull()
     val edadValida = edad != null && edad in 16..100
     val errorEdad = textoEdad.isNotEmpty() && !edadValida
 
-    // Hijos
+    // Hijos: entre 0 y 20
     var textoHijos by rememberSaveable { mutableStateOf("") }
     val hijos = textoHijos.toIntOrNull()
     val hijosValido = hijos != null && hijos in 0..20
     val errorHijos = textoHijos.isNotEmpty() && !hijosValido
 
-    // Selectores
+    // Selectores con su valor por defecto
     var pagas by rememberSaveable { mutableStateOf(14) }
     var estadoCivil by rememberSaveable { mutableStateOf(EstadoCivil.SOLTERO) }
     var grupoProfesional by rememberSaveable { mutableStateOf(GrupoProfesional.ADMINISTRATIVO) }
     var discapacidad by rememberSaveable { mutableStateOf(Discapacidad.NINGUNA) }
 
+    // El botón Calcular solo se activa si todos los campos son válidos
     val formularioValido = salarioValido && edadValida && hijosValido
 
     Column(
         modifier = modifier
             .fillMaxSize()
+            .imePadding() // Deja hueco para el teclado y permite hacer scroll hasta el final
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -88,14 +93,17 @@ fun PantallaDatos(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                // Número de pagas
                 Text("Número de pagas", style = MaterialTheme.typography.titleSmall)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(
-                        selected = pagas == 12, onClick = { pagas = 12 })
+                        selected = pagas == 12,
+                        onClick = { pagas = 12 })
                     Text("12 pagas")
 
                     RadioButton(
-                        selected = pagas == 14, onClick = { pagas = 14 })
+                        selected = pagas == 14,
+                        onClick = { pagas = 14 })
                     Text("14 pagas")
                 }
             }
@@ -221,6 +229,8 @@ fun PantallaDatos(
             }
         }
 
+        // Crea el DatosUsuario con lo introducido y lo envía al cálculo.
+        // Los !! son seguros porque el botón solo está activo si los campos son válidos.
         Button(
             onClick = {
                 alCalcular(
@@ -234,7 +244,9 @@ fun PantallaDatos(
                         hijos = hijos!!
                     )
                 )
-            }, enabled = formularioValido, modifier = Modifier.fillMaxWidth()
+            },
+            enabled = formularioValido,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text("Calcular")
         }

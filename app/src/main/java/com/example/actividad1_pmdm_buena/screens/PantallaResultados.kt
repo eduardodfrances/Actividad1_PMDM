@@ -23,13 +23,16 @@ import com.example.actividad1_pmdm_buena.model.ResultadoNomina
 import java.text.NumberFormat
 import java.util.Locale
 
+// Segunda pantalla: muestra el resultado del cálculo
 @Composable
 fun PantallaResultados(
     resultado: ResultadoNomina,
     alVolver: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    BackHandler() {alVolver()}
+    // El gesto de atrás del sistema vuelve al formulario en lugar de cerrar la app
+    BackHandler { alVolver() }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -39,15 +42,14 @@ fun PantallaResultados(
     ) {
         Text("Tu nómina", style = MaterialTheme.typography.headlineSmall)
 
+        // Tarjeta destacada: neto por paga
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             )
         ) {
-            Column(
-                modifier = Modifier.padding(20.dp)
-            ) {
+            Column(modifier = Modifier.padding(20.dp)) {
                 Text("Neto por paga", style = MaterialTheme.typography.labelLarge)
                 Text(
                     formatoEuros(resultado.netoPorPaga),
@@ -55,9 +57,9 @@ fun PantallaResultados(
                 )
             }
         }
-        Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+
+        // Tarjeta: desglose anual
+        Card(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -85,17 +87,19 @@ fun PantallaResultados(
                 }
             }
         }
+
+        // Vuelve al formulario conservando los datos introducidos
         OutlinedButton(
             onClick = { alVolver() },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Nuevo cálculo")
+            Text("Modificar datos")
         }
     }
 }
 
+// Formatea una cantidad como euros en formato español (1.234,56 €)
 fun formatoEuros(salario: Double): String {
     val formato = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("es-ES"))
     return formato.format(salario)
 }
-
