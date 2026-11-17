@@ -103,4 +103,4 @@ La lógica de cálculo está separada de la interfaz: `CalculadoraNomina` recibe
 
 ## Autor
 
-**[Tu nombre]** · 2.º DAM · Curso 2026-2027
+**Eduardo Daniel Francés Rodríguez** · 2.º DAM · Curso 2026-2027
